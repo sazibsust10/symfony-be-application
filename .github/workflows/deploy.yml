@@ -23,11 +23,13 @@ jobs:
         run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
       - name: PHP Lint
-        run: find src tests -name "*.php" -exec php -l {} \;
+        run: |
+          if [ -d src ]; then find src -name "*.php" -exec php -l {} \;; fi
+          if [ -d tests ]; then find tests -name "*.php" -exec php -l {} \;; fi
 
       - name: Run Tests
-        run: ./vendor/bin/phpunit || echo "Tests failed or not present"
+        run: |
+          if [ -f ./vendor/bin/phpunit ]; then ./vendor/bin/phpunit; else echo "No tests found"; fi
 
       - name: Deploy to Render via deploy hook
-        run: |
-          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
