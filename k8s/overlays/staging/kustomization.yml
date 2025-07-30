@@ -1,0 +1,10 @@
+resources:
+  - ../../base
+  - php-hpa.yml
+
+patchesStrategicMerge:
+  - php-deployment-patch.yml
+  - db-deployment-patch.yml
+
+
+  

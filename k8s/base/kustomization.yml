@@ -1,0 +1,6 @@
+resources:
+  - php-deployment.yml
+  - php-service.yml
+  - db-deployment.yml
+  - db-service.yml
+  - db-pvc.yml

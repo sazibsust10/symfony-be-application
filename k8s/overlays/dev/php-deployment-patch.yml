@@ -1,0 +1,10 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php
+spec:
+  template:
+    spec:
+      containers:
+        - name: php
+          image: ghcr.io/sazibsust10/symfony-be:1.0.0
