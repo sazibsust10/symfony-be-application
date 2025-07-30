@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: symfony-backend
+    env: docker
+    plan: free
+    branch: main
+    repo: https://github.com/sazibsust10/symfony-be-application
+    dockerContext: .
+    dockerfilePath: Dockerfile
+    buildFilter:
+      paths:
+        - .
+    autoDeploy: true
+    envVars:
+      - key: APP_ENV
+        value: prod
+      - key: PORT
+        value: 8000
+

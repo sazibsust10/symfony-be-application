@@ -10,7 +10,7 @@ This project is a simple Symfony-based backend application with a health check e
 
 - **Health Check Endpoint:** `GET /health` returns HTTP 200 OK.
 - **Dockerized Symfony Application:** Runs inside a Docker container.
-- **Production Deployment:** Deployed on Fly.io using Docker.
+- **Production Deployment:** Deployed on render using Docker.
 - **CI/CD Automation:** GitHub Actions pipeline for testing and deployment.
 
 ---
@@ -19,7 +19,7 @@ This project is a simple Symfony-based backend application with a health check e
 
 - Symfony 6 PHP backend application.
 - Docker container for environment consistency.
-- Fly.io for scalable cloud hosting.
+- render for scalable cloud hosting.
 - GitHub Actions for CI/CD automation.
 
 ---
@@ -28,8 +28,8 @@ This project is a simple Symfony-based backend application with a health check e
 
 1. Clone the repo:
     ```bash
-    git clone https://github.com/yourusername/yourrepo.git
-    cd yourrepo
+    git clone https://github.com/sazibsust10/symfony-be-application.git
+    cd symfony-be-application
     ```
 
 2. Install dependencies:
@@ -49,29 +49,40 @@ This project is a simple Symfony-based backend application with a health check e
 
 ---
 
-## Deployment with Fly.io
+## Deployment with render
 
-1. Install Fly CLI from [https://fly.io/docs/hands-on/install-flyctl/](https://fly.io/docs/hands-on/install-flyctl/).
+To deploy this Symfony application using Docker on [Render](https://render.com/), follow these steps:
 
-2. Login to Fly.io:
-    ```bash
-    flyctl auth login
-    ```
+1. **Login to Render Dashboard**  
+   Navigate to [https://dashboard.render.com/](https://dashboard.render.com/) and log in.
 
-3. Create a new app (skip if already created):
-    ```bash
-    flyctl apps create your-fly-app-name
-    ```
+2. **Create a New Web Service**
+   - Click on **"New" → "Web Service"**
+   - Choose **"Deploy from a Git repository"**
+   - Connect your GitHub repository containing this project
 
-4. Deploy the app:
-    ```bash
-    flyctl deploy
-    ```
+3. **Configure Deployment Settings**
+   - **Environment**: `Docker`
+   - **Build Command**: _(leave empty — Dockerfile manages the build)_
+   - **Start Command**: _(leave empty — handled by `CMD` in Dockerfile)_
+   - **Port**: `8000`
 
-5. View the app URL:
-    ```bash
-    flyctl info
-    ```
+4. **Set Environment Variables**
+   Add the required environment variables under the "Environment" section:
+   - `APP_ENV=prod`
+   - Any additional variables from your `.env` file (e.g., `DATABASE_URL`, `SECRET_KEY`, etc.)
+
+5. **Deploy**
+   - Click **Create Web Service**
+   - Render will automatically build and deploy your app using the Dockerfile provided
+
+6. **Access the Application**
+   - Once deployed, Render will provide a public URL (e.g., `https://your-app-name.onrender.com`)
+   - Visit `/health` to verify the app is running:
+     ```
+     https://your-app-name.onrender.com/health
+     ```
+   
 
 ---
 
