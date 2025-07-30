@@ -1,0 +1,19 @@
+app = "your-fly-app-name"
+
+[build]
+  image = "dockerfile"
+
+[env]
+  APP_ENV = "prod"
+
+[[services]]
+  internal_port = 8000
+  protocol = "tcp"
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
