@@ -9,7 +9,7 @@ This project is a simple Symfony-based backend application with a health check e
 ## Features
 
 - **Health Check Endpoint:** `GET /health` returns HTTP 200 OK.
-- **Dockerized Symfony Application:** Runs inside a Docker container.
+- **Dockerized Symfony Application:** Runs inside a Docker container ( multi-stage).
 - **Production Deployment:** Deployed on render using Docker.
 - **CI/CD Automation:** GitHub Actions pipeline for testing and deployment.
 - **k8s:** Kubernetes Deployment with a Horizontal Pod Autoscaler (HPA) and Health check.
@@ -52,7 +52,7 @@ This project is a simple Symfony-based backend application with a health check e
 
 ## Deployment with render
 
-To deploy this Symfony application using Docker on [Render](https://render.com/), follow these steps:
+To deploy this Symfony application using Docker on [Render](https://render.com/), we need to follow these steps:
 
 1. **Login to Render Dashboard**  
    Navigate to [https://dashboard.render.com/](https://dashboard.render.com/) and log in.
@@ -87,14 +87,33 @@ To deploy this Symfony application using Docker on [Render](https://render.com/)
 
 ---
 
-## CI/CD Pipeline
+##  CI/CD Pipeline: Symfony + GitHub Actions + Render
 
-- The `.github/workflows/deploy.yml` file automates:
-  - Code checkout
-  - Composer validation
-  - Render.com deployment on pushes to the `main` branch.
+This project uses GitHub Actions to automate building, testing, and deploying the Symfony backend to [Render](https://render.com) using a deploy hook.
 
+### Workflow Overview
 
+- **Trigger:** Runs automatically on every push to the `main` branch.
+- **Environment:** Uses latest Ubuntu runner with PHP 8.4.
+- **Key Steps:**
+  - ✅ Checkout the source code.
+  - ✅ Set up PHP with required extensions.
+  - ✅ Install Composer dependencies (optimized for production).
+  - ✅ Lint PHP files in the `src` directory to ensure syntax correctness.
+  - ✅ Run PHPUnit tests (if configured).
+  - ✅ Trigger deployment to Render via secure deploy hook.
+
+###  Quality Checks
+
+- PHP linting ensures syntax correctness.
+- PHPUnit (optional) validates application logic.
+
+### Deployment
+
+- A deploy is triggered via a **secure HTTP POST** request to Render using a **Deploy Hook URL** stored in GitHub Secrets:
+  ```bash
+  curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+  ```
 
 ---
 
@@ -124,6 +143,35 @@ To deploy this Symfony application using Docker on [Render](https://render.com/)
 
 
 
+
+---
+
+## Rollback Strategy
+
+To ensure fast recovery in case of faulty deployments or bugs in production, this project includes a simple and effective rollback strategy using Render.
+
+### Manual Rollback via Render Dashboard
+
+- Navigate to your service on the [Render Dashboard](https://dashboard.render.com/).
+- Go to the **Deploys** tab to view recent deployments.
+- Locate a previously successful deployment.
+- Click the **“Rollback”** button to instantly redeploy that version.
+
+**Benefits:**
+- No code changes required.
+- Restores last known-good Docker image and codebase.
+- Keeps environment variables and config unchanged.
+
+---
+
+###  Rollback Using Git Revert
+
+If the issue is code-related:
+
+```bash
+git revert <commit_hash>
+git push origin main
+```
 
 ---
 
