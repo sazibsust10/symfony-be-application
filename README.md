@@ -12,6 +12,7 @@ This project is a simple Symfony-based backend application with a health check e
 - **Dockerized Symfony Application:** Runs inside a Docker container.
 - **Production Deployment:** Deployed on render using Docker.
 - **CI/CD Automation:** GitHub Actions pipeline for testing and deployment.
+- **k8s:** Kubernetes Deployment with a Horizontal Pod Autoscaler (HPA) and Health check.
 
 ---
 
@@ -21,7 +22,7 @@ This project is a simple Symfony-based backend application with a health check e
 - Docker container for environment consistency.
 - render for scalable cloud hosting.
 - GitHub Actions for CI/CD automation.
-
+- kustomization for k8s deployment.
 ---
 
 ## Setup & Run Locally
@@ -77,10 +78,10 @@ To deploy this Symfony application using Docker on [Render](https://render.com/)
    - Render will automatically build and deploy your app using the Dockerfile provided
 
 6. **Access the Application**
-   - Once deployed, Render will provide a public URL (e.g., `https://your-app-name.onrender.com`)
+   - Once deployed, Render will provide a public URL (e.g., `https://symfony-be-application.onrender.com`)
    - Visit `/health` to verify the app is running:
      ```
-     https://your-app-name.onrender.com/health
+     https://symfony-be-application.onrender.com/health
      ```
    
 
@@ -91,21 +92,54 @@ To deploy this Symfony application using Docker on [Render](https://render.com/)
 - The `.github/workflows/deploy.yml` file automates:
   - Code checkout
   - Composer validation
-  - Fly.io deployment on pushes to the `main` branch.
+  - Render.com deployment on pushes to the `main` branch.
 
-Make sure to add your Fly.io API token in the repository secrets as `FLY_API_TOKEN`.
+
+
+---
+
+## k8s
+   ```bash
+   git clone https://github.com/sazibsust10/symfony-be-application.git
+   cd symfony-be-application
+
+   make build 
+   docker build -t ghcr.io/sazibsust10/symfony-be:1.0.1 .
+   make push 
+   docker push ghcr.io/sazibsust10/symfony-be:1.0.1
+
+    # Validate base manifest
+    kubectl apply --dry-run=client -k k8s/base
+
+    # Apply per environment
+    kubectl apply -k k8s/overlays/dev
+    kubectl apply -k k8s/overlays/staging
+    kubectl apply -k k8s/overlays/prod
+
+    # Verify
+    kubectl get all -n dev
+    kubectl get ingress -n dev
+  ```
+     
+
+
+
 
 ---
 
 ## Future Enhancements
 
-- Add database integration with managed Postgres.
-- Add caching layer using Redis.
-- Implement background workers with Symfony Messenger.
-- Configure autoscaling and monitoring.
+- Integrate a managed PostgreSQL database to handle persistent data storage reliably.
+- Add a Redis caching layer to improve performance and reduce database load.
+- Use Symfony Messenger with background workers to handle asynchronous tasks efficiently.
+- Set up autoscaling and monitoring to ensure the app can handle varying workloads and remain stable.
+- I used plain Kubernetes manifests to keep things simple, but tools like Helm would make templating and environment-specific configs easier.
+- I’d add security scanning on container images to catch vulnerabilities early.
+- Kubernetes RBAC and service accounts would tighten security around cluster access.
+- Automating TLS certificates with cert-manager would improve security.
+- Adding observability tools like Prometheus and Grafana would help with monitoring.
+- Finally, I’d integrate secrets management for sensitive data like API keys.
 
 ---
 
-## Contact
 
-For questions or support, please open an issue or contact the maintainer.
