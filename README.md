@@ -137,7 +137,7 @@ This project uses GitHub Actions to automate building, testing, and deploying th
 
     # Verify
     kubectl get all -n dev
-    kubectl get ingress -n dev
+   
   ```
      
 
@@ -179,7 +179,6 @@ git push origin main
 
 - Integrate a managed PostgreSQL database to handle persistent data storage reliably.
 - Add a Redis caching layer to improve performance and reduce database load.
-- Use Symfony Messenger with background workers to handle asynchronous tasks efficiently.
 - Set up autoscaling and monitoring to ensure the app can handle varying workloads and remain stable.
 - I used plain Kubernetes manifests to keep things simple, but tools like Helm would make templating and environment-specific configs easier.
 - I’d add security scanning on container images to catch vulnerabilities early.
